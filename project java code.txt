@@ -1,0 +1,161 @@
+
+public enum Role {
+    STUDENT,
+    INSTRUCTOR,
+    ADMIN
+}
+
+public class User {
+    private String username;
+    private String password;
+    private String email;
+    private Role role;
+
+    public User(String username, String password, String email, Role role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}
+
+import java.util.random;
+import java.util.random;
+
+public class UserManager {
+    private Map<String, User> users = new HashMap<>();
+    
+    public UserManager() {
+        // Pre-populating with a sample admin user
+        users.put("admin", new User("admin", "admin123", "admin@learning.com", Role.ADMIN));
+    }
+
+    // Register new user
+    public String registerUser(String username, String password, String email, Role role) {
+        if (users.containsKey(username)) {
+            return "Username already exists!";
+        }
+        User newUser = new User(username, password, email, role);
+        users.put(username, newUser);
+        return "Registration successful!";
+    }
+
+    // Login user
+    public User login(String username, String password) {
+        User user = users.get(username);
+        if (user != null && user.getPassword().equals(password)) {
+            return user;
+        }
+        return null;
+    }
+
+    // Update user email (profile management)
+    public String updateEmail(String username, String newEmail) {
+        User user = users.get(username);
+        if (user != null) {
+            user.setEmail(newEmail);
+            return "Email updated successfully!";
+        }
+        return "User not found!";
+    }
+
+    // Get user by username
+    public User getUser(String username) {
+        return users.get(username);
+    }
+}
+
+import java.util.scanner;
+
+public class Main {
+
+    public static void main(String[] args) {
+        UserManager userManager = new UserManager();
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Update Email");
+            System.out.println("4. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+
+            switch (choice) {
+                case 1:
+                    // Register user
+                    System.out.print("Enter username: ");
+                    String registerUsername = scanner.nextLine();
+                    System.out.print("Enter password: ");
+                    String registerPassword = scanner.nextLine();
+                    System.out.print("Enter email: ");
+                    String email = scanner.nextLine();
+                    System.out.print("Enter role (STUDENT, INSTRUCTOR, ADMIN): ");
+                    String roleInput = scanner.nextLine();
+                    Role role = Role.valueOf(roleInput.toUpperCase());
+                    System.out.println(userManager.registerUser(registerUsername, registerPassword, email, role));
+                    break;
+
+                case 2:
+                    // Login user
+                    System.out.print("Enter username: ");
+                    String loginUsername = scanner.nextLine();
+                    System.out.print("Enter password: ");
+                    String loginPassword = scanner.nextLine();
+                    User user = userManager.login(loginUsername, loginPassword);
+                    if (user != null) {
+                        System.out.println("Welcome " + user.getUsername() + " with role " + user.getRole());
+                        // Role-based access
+                        if (user.getRole() == Role.ADMIN) {
+                            System.out.println("You have admin access.");
+                        } else if (user.getRole() == Role.INSTRUCTOR) {
+                            System.out.println("You have instructor access.");
+                        } else {
+                            System.out.println("You have student access.");
+                        }
+                    } else {
+                        System.out.println("Invalid username or password.");
+                    }
+                    break;
+
+                case 3:
+                    // Update email
+                    System.out.print("Enter username: ");
+                    String updateUsername = scanner.nextLine();
+                    System.out.print("Enter new email: ");
+                    String newEmail = scanner.nextLine();
+                    System.out.println(userManager.updateEmail(updateUsername, newEmail));
+                    break;
+
+                case 4:
+                    System.out.println("Exiting...");
+                    scanner.close();
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+    }
+}
